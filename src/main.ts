@@ -13,7 +13,7 @@ app.use(router).use(PrimeVue, {
     options: {
       cssLayer: {
         name: 'primevue',
-        order: 'uno-preflight, primevue, uno-default',
+        order: 'uno-preflight, primevue, uno-icons, uno-default',
       },
     },
   },

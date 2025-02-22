@@ -1,4 +1,6 @@
-import { defineConfig, transformerDirectives } from 'unocss'
+import { defineConfig, presetIcons, transformerDirectives } from 'unocss'
+import { FileSystemIconLoader } from '@iconify/utils/lib/loader/node-loaders'
+import presetUno from '@unocss/preset-uno'
 
 const colors = {
   primary: {
@@ -17,33 +19,51 @@ const colors = {
 
 export default defineConfig({
   transformers: [transformerDirectives()],
+  presets: [
+    presetUno(),
+    presetIcons({
+      extraProperties: {
+        'display': 'inline-block',
+      },
+      collections: {
+        'my-icons': FileSystemIconLoader('./src/icons'),
+      },
+    }),
+  ],
   outputToCssLayers: {
     cssLayerName: (layer) => {
       if (layer === 'default') {
         return 'uno-default'
       }
-      if(layer === 'preflights') {
+      if (layer === 'preflights') {
         return 'uno-preflight'
       }
-    }
+      if(layer === 'icons') {
+        return 'uno-icons'
+      }
+    },
   },
   theme: {
     colors,
   },
-  preflights: [{
-    getCSS: ({ theme }) => {
-      const colorVariables = Object.entries(theme.colors).map(([colorName, shades]) => {
-        const shadeVariables = Object.entries(shades)
-          .map(([shade, value]) => `--${colorName}-${shade}: ${value};`)
-          .join('\n');
-        return shadeVariables;
-      }).join('\n');
+  preflights: [
+    {
+      getCSS: ({ theme }) => {
+        const colorVariables = Object.entries(theme.colors)
+          .map(([colorName, shades]) => {
+            const shadeVariables = Object.entries(shades)
+              .map(([shade, value]) => `--${colorName}-${shade}: ${value};`)
+              .join('\n')
+            return shadeVariables
+          })
+          .join('\n')
 
-      return `
+        return `
         :root {
           ${colorVariables}
         }
-      `;
+      `
+      },
     },
-  }],
+  ],
 })

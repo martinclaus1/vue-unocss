@@ -4,7 +4,8 @@ import PButton from 'primevue/button'
 
 <template>
   <main>
-    <p-button label="Test"></p-button>
+    <p-button label="Test" icon="i-my-icons:add text-xl"></p-button>
+    <i class="i-my-icons-add text-xl"></i>
   </main>
 </template>
 
