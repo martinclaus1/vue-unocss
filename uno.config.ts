@@ -1,6 +1,6 @@
-import { defineConfig, presetIcons, transformerDirectives } from 'unocss'
+import { defineConfig, presetIcons, presetUno, presetWebFonts, transformerDirectives } from 'unocss'
+import { createLocalFontProcessor } from '@unocss/preset-web-fonts/local'
 import { FileSystemIconLoader } from '@iconify/utils/lib/loader/node-loaders'
-import presetUno from '@unocss/preset-uno'
 
 const colors = {
   primary: {
@@ -23,11 +23,32 @@ export default defineConfig({
     presetUno(),
     presetIcons({
       extraProperties: {
-        'display': 'inline-block',
+        display: 'inline-block',
+        'vertical-align': 'middle',
       },
       collections: {
         'my-icons': FileSystemIconLoader('./src/icons'),
       },
+    }),
+    presetWebFonts({
+      provider: 'google',
+      fonts: {
+        sans: {
+          name: 'Figtree',
+          weights: [300, 400, 500, 600, 700, 800, 900],
+          italic: true,
+        },
+      },
+      processors: createLocalFontProcessor({
+        // Directory to cache the fonts
+        cacheDir: 'node_modules/.cache/unocss/fonts',
+
+        // Directory to save the fonts assets
+        fontAssetsDir: 'public/assets/fonts',
+
+        // Base URL to serve the fonts from the client
+        fontServeBaseUrl: '/assets/fonts',
+      }),
     }),
   ],
   outputToCssLayers: {
@@ -38,7 +59,7 @@ export default defineConfig({
       if (layer === 'preflights') {
         return 'uno-preflight'
       }
-      if(layer === 'icons') {
+      if (layer === 'icons') {
         return 'uno-icons'
       }
     },
@@ -64,6 +85,13 @@ export default defineConfig({
         }
       `
       },
+    },
+    {
+      getCSS: () => `
+          html {
+            @apply font-sans;
+          }
+        `,
     },
   ],
 })
